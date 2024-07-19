@@ -50,7 +50,8 @@ const uploadSingle = (fieldName) => (req, res, next) => {
     }
 
     if (!req.file) {
-      return res.status(400).send('No file uploaded');
+      req.file = {};
+      //return res.status(400).send('No file uploaded');
     }
 
     try {
