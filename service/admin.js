@@ -3,7 +3,7 @@ const {
   Category,
   Subcategory,
   Popularcategory,
-  TrendingCategory,
+  Trendingcategory,
 } = require('../models/admin');
 const multer = require('multer');
 const bcrypt = require('bcrypt');
@@ -310,7 +310,7 @@ const addTrendingCategory = async (req, res) => {
       if (category.length === 0) {
         return res.status(400).json({ message: 'No category found' });
       }
-      newtrendingCategory = new TrendingCategory({
+      newtrendingCategory = new Trendingcategory({
         category: category._id,
         createdAt: Date.now(),
       });
@@ -447,7 +447,7 @@ const fetchTrendingCategory = async (req, res) => {
       }
     }
 
-    res.status(200).json(popularcatdata);
+    res.status(200).json(trendingcatdata);
   } catch (error) {
     console.log('error', error);
     res.status(500).send('Server Error');

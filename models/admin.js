@@ -65,4 +65,5 @@ module.exports = {
   Category,
   Subcategory,
   Popularcategory,
+  Trendingcategory,
 };
