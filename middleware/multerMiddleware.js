@@ -42,6 +42,55 @@ const upload = multer({
 });
 
 // Middleware for handling single file upload
+// const uploadSingle = (fieldName) => (req, res, next) => {
+//   upload.single(fieldName)(req, res, async (err) => {
+//     if (err) {
+//       console.error('Error uploading file:', err);
+//       return res.status(500).send('Error uploading file');
+//     }
+
+//     if (!req.file) {
+//       req.file = {};
+//       //return res.status(400).send('No file uploaded');
+//     }
+
+//     try {
+//       const file = req.file;
+//       const folderPath = fieldName;
+
+//       // Upload file to Firebase Cloud Storage
+//       // const blob = bucket.file(file.originalname);
+//       const blob = bucket.file(`${folderPath}/${file.originalname}`);
+//       const blobStream = blob.createWriteStream({
+//         metadata: {
+//           contentType: file.mimetype,
+//         },
+//       });
+
+//       blobStream.on('error', (err) => {
+//         console.error('Error uploading to Firebase:', err);
+//         res.status(500).send('Error uploading to Firebase');
+//       });
+
+//       blobStream.on('finish', async () => {
+//         await blob.makePublic();
+//         // Generate public URL for the uploaded file
+//         const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
+
+//         // Attach Firebase URL to req.file object if needed
+//         req.file.firebaseUrl = publicUrl;
+
+//         next(); // Call next middleware or request handler
+//       });
+
+//       blobStream.end(file.buffer); // Write file buffer to Cloud Storage
+//     } catch (error) {
+//       console.error('Error:', error);
+//       res.status(500).send('Server Error');
+//     }
+//   });
+// };
+// Middleware for handling single file upload
 const uploadSingle = (fieldName) => (req, res, next) => {
   upload.single(fieldName)(req, res, async (err) => {
     if (err) {
@@ -50,16 +99,14 @@ const uploadSingle = (fieldName) => (req, res, next) => {
     }
 
     if (!req.file) {
+      console.log('No file uploaded.');
       req.file = {};
-      //return res.status(400).send('No file uploaded');
+      return next(); // Proceed without file
     }
 
     try {
       const file = req.file;
       const folderPath = fieldName;
-
-      // Upload file to Firebase Cloud Storage
-      // const blob = bucket.file(file.originalname);
       const blob = bucket.file(`${folderPath}/${file.originalname}`);
       const blobStream = blob.createWriteStream({
         metadata: {
@@ -74,13 +121,10 @@ const uploadSingle = (fieldName) => (req, res, next) => {
 
       blobStream.on('finish', async () => {
         await blob.makePublic();
-        // Generate public URL for the uploaded file
         const publicUrl = `https://storage.googleapis.com/${bucket.name}/${blob.name}`;
-
-        // Attach Firebase URL to req.file object if needed
+        console.log('Generated public URL:', publicUrl);
         req.file.firebaseUrl = publicUrl;
-
-        next(); // Call next middleware or request handler
+        next(); // Proceed to the next middleware or request handler
       });
 
       blobStream.end(file.buffer); // Write file buffer to Cloud Storage
