@@ -140,7 +140,35 @@ const createUser = async (req, res) => {
   }
 };
 
+//fetch userdetails
+const userDetails = async (req, res) => {
+  try {
+    const { email } = req.query;
+
+    // Ensure the ID is provided
+    if (!email) {
+      return res.status(400).json({ error: 'email is required' });
+    }
+
+    // Fetch the user by ID
+    const user = await User.findOne({ email: email }).exec();
+
+    if (user) {
+      // Return user details
+      res.json({ user });
+    } else {
+      return res.status(404).json({ error: 'User not found' });
+    }
+  } catch (error) {
+    console.error(error);
+    return res
+      .status(500)
+      .json({ error: 'Server error. Please try again later.' });
+  }
+};
+
 module.exports = {
   userlogin,
   createUser,
+  userDetails,
 };

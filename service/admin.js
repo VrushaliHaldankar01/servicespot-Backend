@@ -328,6 +328,129 @@ const addCategory = async (req, res) => {
 };
 
 //add sub Category
+// const addOrEditSubcategory = async (req, res) => {
+//   try {
+//     if (
+//       req.headers['content-type'] &&
+//       req.headers['content-type'].includes('multipart/form-data')
+//     ) {
+//       // Handle multipart/form-data uploads using multer
+//       uploadSingle('subcategoryImage')(req, res, async (err) => {
+//         if (err) {
+//           console.error('Error uploading file:', err);
+//           return res.status(500).send('Error uploading file');
+//         }
+
+//         try {
+//           const { id, name, description, CategoryName } = req.body;
+
+//           // Find the parent category
+//           const parentCategory = await Category.findOne({ name: CategoryName });
+
+//           if (!parentCategory) {
+//             return res.status(400).json({ message: 'Category does not exist' });
+//           }
+
+//           let subcategoryImage = req.file ? req.file.firebaseUrl : '';
+
+//           if (id) {
+//             // Edit operation
+//             const subcategory = await Subcategory.findById(id);
+//             if (!subcategory) {
+//               return res.status(404).json({ message: 'Subcategory not found' });
+//             }
+
+//             // Update fields
+//             subcategory.name = name;
+//             subcategory.description = description;
+//             if (subcategoryImage) {
+//               subcategory.subcategoryImage = subcategoryImage;
+//             }
+//             subcategory.category = parentCategory._id;
+//             subcategory.updatedAt = Date.now();
+
+//             const updatedSubcategory = await subcategory.save();
+//             res.status(200).json(updatedSubcategory);
+//           } else {
+//             // Add operation
+//             const findSubcategory = await Subcategory.findOne({ name });
+//             if (findSubcategory) {
+//               return res
+//                 .status(400)
+//                 .json({ message: 'Subcategory already exists' });
+//             }
+
+//             const newSubcategory = new Subcategory({
+//               name,
+//               description,
+//               subcategoryImage,
+//               category: parentCategory._id,
+//               createdAt: Date.now(),
+//             });
+
+//             const savedSubcategory = await newSubcategory.save();
+//             res.status(201).json(savedSubcategory);
+//           }
+//         } catch (error) {
+//           console.error('Error:', error);
+//           res.status(500).send('Server Error');
+//         }
+//       });
+//     } else {
+//       // Handle normal form data processing without image upload
+//       const { id, name, description, CategoryName } = req.body;
+
+//       try {
+//         const parentCategory = await Category.findOne({ name: CategoryName });
+
+//         if (!parentCategory) {
+//           return res.status(400).json({ message: 'Category does not exist' });
+//         }
+
+//         if (id) {
+//           // Edit operation
+//           const subcategory = await Subcategory.findById(id);
+//           if (!subcategory) {
+//             return res.status(404).json({ message: 'Subcategory not found' });
+//           }
+
+//           // Update fields
+//           subcategory.name = name;
+//           subcategory.description = description;
+//           subcategory.category = parentCategory._id;
+//           subcategory.updatedAt = Date.now();
+
+//           const updatedSubcategory = await subcategory.save();
+//           res.status(200).json(updatedSubcategory);
+//         } else {
+//           // Add operation
+//           const findSubcategory = await Subcategory.findOne({ name });
+//           if (findSubcategory) {
+//             return res
+//               .status(400)
+//               .json({ message: 'Subcategory already exists' });
+//           }
+
+//           const newSubcategory = new Subcategory({
+//             name,
+//             description,
+//             category: parentCategory._id,
+//             createdAt: Date.now(),
+//           });
+
+//           const savedSubcategory = await newSubcategory.save();
+//           res.status(201).json(savedSubcategory);
+//         }
+//       } catch (error) {
+//         console.error('Error:', error);
+//         res.status(500).send('Server Error');
+//       }
+//     }
+//   } catch (error) {
+//     console.error('Error:', error);
+//     res.status(500).send('Server Error');
+//   }
+// };
 const addOrEditSubcategory = async (req, res) => {
   try {
     if (

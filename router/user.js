@@ -17,4 +17,7 @@ router.post(
 
 router.post('/login', userService.userlogin);
 
+//fetch
+router.get('/userdetails', userService.userDetails);
+
 module.exports = router;
