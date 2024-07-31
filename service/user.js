@@ -45,46 +45,148 @@ const userlogin = async (req, res) => {
   }
 };
 
+// const createUser = async (req, res) => {
+//   const handleUserCreation = async (req, res) => {
+//     try {
+//       const userfirstName = req.body.firstName;
+//       const userlastName = req.body.lastName;
+//       const userEmail = req.body.email;
+//       const userPassword = req.body.password;
+//       const userphonenumber = req.body.phonenumber;
+//       const isVendor =
+//         req.body.isVendor === 'true' || req.body.isVendor === true;
+//       const role = isVendor ? 'vendor' : 'user';
+
+//       if (!userEmail || !userPassword) {
+//         // return res.status(400).send('Email and password are required');
+//         return res
+//           .status(400)
+//           .json({ error: 'Email and password are required' });
+//       }
+
+//       const checkUser = await User.findOne({ email: userEmail, role });
+
+//       if (checkUser) {
+//         // return res.send('Email id already exists');
+//         //return res.send(400).json({ error: 'Email id already exists' });
+//         return res.status(400).json({ error: 'Email id already exists' });
+//       }
+
+//       console.log('Password before hashing:', userPassword);
+
+//       // Hash the password with the salt
+//       const salt = await bcrypt.genSalt(10);
+//       const hashedPassword = await bcrypt.hash(userPassword, salt);
+
+//       const newUser = await User.create({
+//         firstName: userfirstName,
+//         lastName: userlastName,
+//         email: userEmail,
+//         password: hashedPassword,
+//         phonenumber: userphonenumber,
+//         role: role,
+//         createdAt: Date.now(),
+//       });
+
+//       const token = jwt.sign({ userId: newUser._id }, process.env.SECRET, {
+//         expiresIn: '1h',
+//       });
+
+//       console.log('User created:', newUser);
+
+//       if (isVendor) {
+//         const files = req.files; // Array of files uploaded
+//         //const filepaths = files.map((file) => file.path); // Array of file paths
+//         const fileUrls = files.map((file) => file.firebaseUrl);
+//         const newVendor = await Vendor.create({
+//           vendorid: newUser._id,
+//           businessname: req.body.businessname,
+//           businessdescription: req.body.businessdescription,
+//           province: req.body.province,
+//           city: req.body.city,
+//           pincode: req.body.pincode,
+//           businessImages: fileUrls, // Array of file paths
+//           isActive: true,
+//           createdAt: Date.now(),
+//         });
+
+//         console.log('New vendor created:', newVendor);
+
+//         return res.json({ token, newUser, newVendor });
+//       } else {
+//         res.json({ token, newUser });
+//       }
+//     } catch (error) {
+//       console.error('Error:', error);
+//       res.status(500).send('Server Error');
+//     }
+//   };
+
+//   // Check if there is a file being uploaded
+//   if (
+//     req.headers['content-type'] &&
+//     req.headers['content-type'].includes('multipart/form-data')
+//   ) {
+//     uploadMultiple('businessImages')(req, res, function (err) {
+//       // Use uploadSingle or uploadMultiple as per your requirement
+//       if (err) {
+//         console.error('Error uploading file:', err);
+//         return res.status(500).send('Error uploading file');
+//       }
+//       handleUserCreation(req, res);
+//     });
+//   } else {
+//     handleUserCreation(req, res);
+//   }
+// };
+
+//fetch userdetails
+
 const createUser = async (req, res) => {
   const handleUserCreation = async (req, res) => {
     try {
-      const userfirstName = req.body.firstName;
-      const userlastName = req.body.lastName;
-      const userEmail = req.body.email;
-      const userPassword = req.body.password;
-      const userphonenumber = req.body.phonenumber;
-      const isVendor =
-        req.body.isVendor === 'true' || req.body.isVendor === true;
-      const role = isVendor ? 'vendor' : 'user';
+      const {
+        firstName,
+        lastName,
+        email,
+        password,
+        phonenumber,
+        isVendor,
+        businessname,
+        businessdescription,
+        province,
+        city,
+        postalcode,
+        businessnumber,
+        category,
+        subcategory,
+        status,
+      } = req.body;
 
-      if (!userEmail || !userPassword) {
-        // return res.status(400).send('Email and password are required');
+      const role = isVendor === 'true' || isVendor === true ? 'vendor' : 'user';
+
+      if (!email || !password) {
         return res
           .status(400)
           .json({ error: 'Email and password are required' });
       }
 
-      const checkUser = await User.findOne({ email: userEmail, role });
+      const checkUser = await User.findOne({ email, role });
 
       if (checkUser) {
-        // return res.send('Email id already exists');
-        //return res.send(400).json({ error: 'Email id already exists' });
         return res.status(400).json({ error: 'Email id already exists' });
       }
 
-      console.log('Password before hashing:', userPassword);
-
-      // Hash the password with the salt
       const salt = await bcrypt.genSalt(10);
-      const hashedPassword = await bcrypt.hash(userPassword, salt);
+      const hashedPassword = await bcrypt.hash(password, salt);
 
       const newUser = await User.create({
-        firstName: userfirstName,
-        lastName: userlastName,
-        email: userEmail,
+        firstName,
+        lastName,
+        email,
         password: hashedPassword,
-        phonenumber: userphonenumber,
-        role: role,
+        phonenumber,
+        role,
         createdAt: Date.now(),
       });
 
@@ -92,25 +194,25 @@ const createUser = async (req, res) => {
         expiresIn: '1h',
       });
 
-      console.log('User created:', newUser);
-
       if (isVendor) {
         const files = req.files; // Array of files uploaded
-        //const filepaths = files.map((file) => file.path); // Array of file paths
         const fileUrls = files.map((file) => file.firebaseUrl);
+
         const newVendor = await Vendor.create({
           vendorid: newUser._id,
-          businessname: req.body.businessname,
-          businessdescription: req.body.businessdescription,
-          province: req.body.province,
-          city: req.body.city,
-          pincode: req.body.pincode,
-          businessImages: fileUrls, // Array of file paths
+          businessname,
+          businessdescription,
+          province,
+          city,
+          postalcode,
+          businessnumber,
+          businessImages: fileUrls,
+          category, // Store the category ID
+          subcategory, // Store the subcategory ID
+          status: 'pending',
           isActive: true,
           createdAt: Date.now(),
         });
-
-        console.log('New vendor created:', newVendor);
 
         return res.json({ token, newUser, newVendor });
       } else {
@@ -122,13 +224,11 @@ const createUser = async (req, res) => {
     }
   };
 
-  // Check if there is a file being uploaded
   if (
     req.headers['content-type'] &&
     req.headers['content-type'].includes('multipart/form-data')
   ) {
     uploadMultiple('businessImages')(req, res, function (err) {
-      // Use uploadSingle or uploadMultiple as per your requirement
       if (err) {
         console.error('Error uploading file:', err);
         return res.status(500).send('Error uploading file');
@@ -140,7 +240,6 @@ const createUser = async (req, res) => {
   }
 };
 
-//fetch userdetails
 const userDetails = async (req, res) => {
   try {
     const { email } = req.query;

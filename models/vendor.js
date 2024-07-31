@@ -1,7 +1,6 @@
-// Require Mongoose
+// // Require Mongoose
 const mongoose = require('mongoose');
 
-// Define User Schema
 const vendorSchema = new mongoose.Schema({
   vendorid: {
     type: mongoose.Schema.Types.ObjectId,
@@ -9,19 +8,28 @@ const vendorSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  // vendorid: { type: String },
   businessname: { type: String },
   businessdescription: { type: String },
   province: { type: String },
   city: { type: String },
-  pincode: { type: String },
+  postalcode: { type: String },
+  businessnumber: { type: String },
   businessImages: [{ type: String }],
+  category: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Category',
+  },
+  subcategory: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Subcategory',
+  },
+  status: { type: String },
   isActive: { type: Boolean, default: true },
   createdAt: { type: Date, required: true },
   updatedAt: { type: Date, required: true, default: Date.now() },
 });
 
 // Define models
-const User = mongoose.model('Vendor', vendorSchema);
+const Vendor = mongoose.model('Vendor', vendorSchema);
 
-module.exports = User;
+module.exports = Vendor;

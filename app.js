@@ -6,6 +6,9 @@ require('dotenv').config();
 //user Routes
 const userRouter = require('./router/user');
 
+//vendor Routes
+const vendorRouter = require('./router/vendor');
+
 //admin Routes
 const adminRouter = require('./router/admin');
 
@@ -27,6 +30,8 @@ mongoose
     console.log('error connecting to  MomgoDB databse');
   });
 app.use('/user', userRouter);
+
+app.use('/vendor', vendorRouter);
 
 app.use('/admin', adminRouter);
 
