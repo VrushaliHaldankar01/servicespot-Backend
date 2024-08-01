@@ -7,6 +7,7 @@ const router = express.Router();
 
 //fetch
 router.get('/vendorDetails', vendorService.fetchVendorDetails);
+router.get('/vendorwrtsubcategory', vendorService.fetchVendorWrtSubcategory);
 
 // router.get('/login', userService.userlogin);
 

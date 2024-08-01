@@ -32,6 +32,98 @@ const fetchVendorDetails = async (req, res) => {
   }
 };
 
+// const fetchVendorWrtSubcategory = async (req, res) => {
+//   try {
+//     const { id } = req.query;
+//     let vendordetails;
+
+//     if (id) {
+//       // Fetch vendors by the provided subcategory ID
+//       vendordetails = await Vendor.find({
+//         subcategory: id,
+//         isActive: true,
+//       }).populate({
+//         path: 'subcategory', // Path to populate
+//         select: 'name', // Select specific fields from the populated subcategory
+//         populate: {
+//           path: 'category', // Nested populate to also include category details
+//           select: 'name',
+//         },
+//       });
+
+//       if (vendordetails.length === 0) {
+//         return res.status(400).json({ message: 'No vendor found' });
+//       }
+//     } else {
+//       // Fetch all active vendors if no subcategory ID is provided
+//       vendordetails = await Vendor.find({ isActive: true }).populate({
+//         path: 'subcategory',
+//         select: 'name',
+//         populate: {
+//           path: 'category',
+//           select: 'name',
+//         },
+//       });
+//     }
+
+//     res.status(200).json(vendordetails);
+//   } catch (error) {
+//     console.log('error', error);
+//     res.status(500).send('Server Error');
+//   }
+// };
+const fetchVendorWrtSubcategory = async (req, res) => {
+  try {
+    const { id } = req.query;
+    let vendordetails;
+
+    if (id) {
+      // Fetch vendors by the provided subcategory ID
+      vendordetails = await Vendor.find({
+        subcategory: id,
+        isActive: true,
+      })
+        .populate({
+          path: 'subcategory', // Path to populate subcategory details
+          select: 'name', // Select specific fields from the populated subcategory
+          populate: {
+            path: 'category', // Nested populate to also include category details
+            select: 'name',
+          },
+        })
+        .populate({
+          path: 'vendorid', // Populate vendorid to include user details
+          select: 'firstName lastName email phonenumber', // Select specific fields from the User model
+        });
+
+      if (vendordetails.length === 0) {
+        return res.status(400).json({ message: 'No vendor found' });
+      }
+    } else {
+      // Fetch all active vendors if no subcategory ID is provided
+      vendordetails = await Vendor.find({ isActive: true })
+        .populate({
+          path: 'subcategory',
+          select: 'name',
+          populate: {
+            path: 'category',
+            select: 'name',
+          },
+        })
+        .populate({
+          path: 'vendorid', // Populate vendorid to include user details
+          select: 'firstName lastName email phonenumber', // Select specific fields from the User model
+        });
+    }
+
+    res.status(200).json(vendordetails);
+  } catch (error) {
+    console.log('error', error);
+    res.status(500).send('Server Error');
+  }
+};
+
 module.exports = {
   fetchVendorDetails,
+  fetchVendorWrtSubcategory,
 };

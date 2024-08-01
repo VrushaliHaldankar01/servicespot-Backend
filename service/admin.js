@@ -828,32 +828,7 @@ const fetchSubCategory = async (req, res) => {
 };
 
 //fetch perticular subcategory
-// const fetchPerticularSubCategory = async (req, res) => {
-//   try {
-//     const { name } = req.query;
-//     let subcategories;
 
-//     if (name) {
-//       // Fetch subcategories by the provided name
-//       subcategories = await Subcategory.find({
-//         name: { $regex: new RegExp(name, 'i') }, // Case-insensitive search
-//         isActive: true,
-//       });
-
-//       if (subcategories.length === 0) {
-//         return res.status(400).json({ message: 'No subcategory found' });
-//       }
-//     } else {
-//       // Fetch all active subcategories if no name is provided
-//       subcategories = await Subcategory.find({ isActive: true });
-//     }
-
-//     res.status(200).json(subcategories);
-//   } catch (error) {
-//     console.log('error', error);
-//     res.status(500).send('Server Error');
-//   }
-// };
 const fetchPerticularSubCategory = async (req, res) => {
   try {
     const { name } = req.query;
