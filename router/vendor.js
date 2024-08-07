@@ -8,7 +8,7 @@ const router = express.Router();
 //fetch
 router.get('/vendorDetails', vendorService.fetchVendorDetails);
 router.get('/vendorwrtsubcategory', vendorService.fetchVendorWrtSubcategory);
-
+router.put('/updateStatus/:id', vendorService.updateStatus);
 // router.get('/login', userService.userlogin);
 
 module.exports = router;
