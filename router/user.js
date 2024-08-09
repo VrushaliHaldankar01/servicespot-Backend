@@ -14,6 +14,7 @@ router.post(
 
   userService.createUser
 );
+router.put('/editUser/:userId', userService.editUser);
 
 router.post('/login', userService.userlogin);
 

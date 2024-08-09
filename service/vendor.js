@@ -10,27 +10,6 @@ const {
 } = require('../middleware/multerMiddleware');
 const bucket = require('../firebaseAdmin'); // Import Firebase bucket instance
 
-// const fetchVendorDetails = async (req, res) => {
-//   try {
-//     const { name } = req.query;
-//     let vendorDetails;
-
-//     if (name) {
-//       vendorDetails = await Vendor.find({ name: name });
-//       if (vendorDetails.length === 0) {
-//         return res.status(400).json({ message: 'No Vendor found' });
-//       }
-//     } else {
-//       vendorDetails = await Vendor.find({});
-//     }
-
-//     res.status(200).json(vendorDetails);
-//   } catch (error) {
-//     console.log('error', error);
-//     res.status(500).send('Server Error');
-//   }
-// };
-
 const fetchVendorDetails = async (req, res) => {
   try {
     const { id, name, status } = req.query;
