@@ -10,7 +10,6 @@ const {
 } = require('../middleware/multerMiddleware');
 const bucket = require('../firebaseAdmin'); // Import Firebase bucket instance
 
-//fetch vendor details
 // const fetchVendorDetails = async (req, res) => {
 //   try {
 //     const { name } = req.query;
@@ -58,22 +57,60 @@ const bucket = require('../firebaseAdmin'); // Import Firebase bucket instance
 //     res.status(500).send('Server Error');
 //   }
 // };
+// const fetchVendorDetails = async (req, res) => {
+//   try {
+//     const { name, status } = req.query;
+//     let query = {};
+
+//     // Build the query object based on the provided query parameters
+//     if (name) {
+//       query.name = name;
+//     }
+
+//     if (status) {
+//       query.status = status;
+//     }
+
+//     // Fetch vendors based on the constructed query
+//     const vendorDetails = await Vendor.find(query);
+
+//     if (vendorDetails.length === 0) {
+//       // Specific message for no vendors found with a given status
+//       if (status) {
+//         return res
+//           .status(404)
+//           .json({ message: `No vendors found with status '${status}'` });
+//       }
+//       // Generic message for no vendors found with other criteria
+//       return res.status(404).json({ message: 'No vendors found.' });
+//     }
+
+//     res.status(200).json(vendorDetails);
+//   } catch (error) {
+//     console.log('error', error);
+//     res.status(500).send('Server Error');
+//   }
+// };
 const fetchVendorDetails = async (req, res) => {
   try {
-    const { name, status } = req.query;
+    const { id, name, status } = req.query;
     let query = {};
 
     // Build the query object based on the provided query parameters
+    if (id) {
+      query._id = id;
+    }
+
     if (name) {
-      query.name = name;
+      query.businessname = name;
     }
 
     if (status) {
       query.status = status;
     }
 
-    // Fetch vendors based on the constructed query
-    const vendorDetails = await Vendor.find(query);
+    // Fetch vendors based on the constructed query and populate user details
+    const vendorDetails = await Vendor.find(query).populate('vendorid');
 
     if (vendorDetails.length === 0) {
       // Specific message for no vendors found with a given status
@@ -92,7 +129,6 @@ const fetchVendorDetails = async (req, res) => {
     res.status(500).send('Server Error');
   }
 };
-
 // const fetchVendorWrtSubcategory = async (req, res) => {
 //   try {
 //     const { id } = req.query;
