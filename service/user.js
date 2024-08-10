@@ -170,69 +170,149 @@ const userDetails = async (req, res) => {
 };
 
 // user and vendor edit api
+// const editUser = async (req, res) => {
+//   try {
+//     const { userId } = req.params;
+//     const {
+//       firstName,
+//       lastName,
+//       email,
+//       phonenumber,
+//       isVendor,
+//       businessname,
+//       businessdescription,
+//       province,
+//       city,
+//       postalcode,
+//       businessnumber,
+//       category,
+//       subcategory,
+//       status,
+//     } = req.body;
+
+//     const updatedFields = {
+//       firstName,
+//       lastName,
+//       email,
+//       phonenumber,
+//     };
+
+//     const updatedUser = await User.findByIdAndUpdate(
+//       userId,
+//       { $set: updatedFields },
+//       { new: true }
+//     );
+
+//     if (isVendor) {
+//       const files = req.files; // Array of files uploaded
+//       const fileUrls = files.map((file) => file.firebaseUrl);
+
+//       const updatedVendorFields = {
+//         businessname,
+//         businessdescription,
+//         province,
+//         city,
+//         postalcode,
+//         businessnumber,
+//         businessImages: fileUrls,
+//         category, // Store the category ID
+//         subcategory, // Store the subcategory ID
+//         status,
+//       };
+
+//       const updatedVendor = await Vendor.findOneAndUpdate(
+//         { vendorid: userId },
+//         { $set: updatedVendorFields },
+//         { new: true }
+//       );
+
+//       return res.json({ updatedUser, updatedVendor });
+//     } else {
+//       res.json({ updatedUser });
+//     }
+//   } catch (error) {
+//     console.error('Error:', error);
+//     res.status(500).send('Server Error');
+//   }
+// };
 const editUser = async (req, res) => {
-  try {
-    const { userId } = req.params;
-    const {
-      firstName,
-      lastName,
-      email,
-      phonenumber,
-      isVendor,
-      businessname,
-      businessdescription,
-      province,
-      city,
-      postalcode,
-      businessnumber,
-      category,
-      subcategory,
-      status,
-    } = req.body;
-
-    const updatedFields = {
-      firstName,
-      lastName,
-      email,
-      phonenumber,
-    };
-
-    const updatedUser = await User.findByIdAndUpdate(
-      userId,
-      { $set: updatedFields },
-      { new: true }
-    );
-
-    if (isVendor) {
-      const files = req.files; // Array of files uploaded
-      const fileUrls = files.map((file) => file.firebaseUrl);
-
-      const updatedVendorFields = {
+  const handleUserUpdate = async (req, res) => {
+    try {
+      const { userId } = req.params;
+      const {
+        firstName,
+        lastName,
+        email,
+        phonenumber,
+        isVendor,
         businessname,
         businessdescription,
         province,
         city,
         postalcode,
         businessnumber,
-        businessImages: fileUrls,
-        category, // Store the category ID
-        subcategory, // Store the subcategory ID
+        category,
+        subcategory,
         status,
-      };
+      } = req.body;
 
-      const updatedVendor = await Vendor.findOneAndUpdate(
-        { vendorid: userId },
-        { $set: updatedVendorFields },
+      const updatedFields = { firstName, lastName, email, phonenumber };
+
+      // Update the User document
+      const updatedUser = await User.findByIdAndUpdate(
+        userId,
+        { $set: updatedFields },
         { new: true }
       );
 
-      return res.json({ updatedUser, updatedVendor });
-    } else {
-      res.json({ updatedUser });
+      if (isVendor) {
+        const files = req.files; // Array of files uploaded
+        const fileUrls = files ? files.map((file) => file.firebaseUrl) : [];
+
+        const updatedVendorFields = {
+          businessname,
+          businessdescription,
+          province,
+          city,
+          postalcode,
+          businessnumber,
+          businessImages: fileUrls,
+          category,
+          subcategory,
+          status,
+        };
+
+        // Update the Vendor document
+        const updatedVendor = await Vendor.findOneAndUpdate(
+          { vendorid: userId },
+          { $set: updatedVendorFields },
+          { new: true }
+        );
+
+        return res.json({ updatedUser, updatedVendor });
+      } else {
+        res.json({ updatedUser });
+      }
+    } catch (error) {
+      console.error('Error:', error);
+      res.status(500).send('Server Error');
     }
-  } catch (error) {
-    console.error('Error:', error);
-    res.status(500).send('Server Error');
+  };
+
+  // Check if the request is multipart/form-data
+  if (
+    req.headers['content-type'] &&
+    req.headers['content-type'].includes('multipart/form-data')
+  ) {
+    uploadMultiple('businessImages')(req, res, function (err) {
+      if (err) {
+        console.error('Error uploading file:', err);
+        return res.status(500).send('Error uploading file');
+      }
+      handleUserUpdate(req, res);
+    });
+  } else {
+    handleUserUpdate(req, res);
   }
 };
 
