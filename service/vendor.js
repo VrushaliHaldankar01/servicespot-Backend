@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
-const Vendor = require('../models/vendor');
+
 const user = require('../models/vendor');
+
+const { Vendor, Catalogue } = require('../models/vendor');
+
 const multer = require('multer');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
@@ -8,6 +11,7 @@ const {
   uploadSingle,
   uploadMultiple,
 } = require('../middleware/multerMiddleware');
+
 const bucket = require('../firebaseAdmin'); // Import Firebase bucket instance
 
 const fetchVendorDetails = async (req, res) => {
@@ -167,8 +171,141 @@ const updateStatus = async (req, res) => {
       .json({ message: 'Server error while updating vendor status' });
   }
 };
+
+//upload catalogue
+const uploadCatalogue = async (req, res) => {
+  try {
+    if (
+      req.headers['content-type'] &&
+      req.headers['content-type'].includes('multipart/form-data')
+    ) {
+      // Handle file upload
+      uploadMultiple('productImages')(req, res, async (err) => {
+        if (err) {
+          console.error('Error uploading files:', err);
+          return res.status(500).send('Error uploading files');
+        }
+
+        try {
+          const { id, productName, productDescription, price, vendorId } =
+            req.body;
+          const productImages = req.files
+            ? req.files.map((file) => file.firebaseUrl)
+            : [];
+
+          if (!productName || !productDescription || !price || !vendorId) {
+            return res.status(400).json({
+              message:
+                'Product name, description, price, and vendor ID are required',
+            });
+          }
+
+          if (id) {
+            // Edit operation
+            const catalogue = await Catalogue.findById(id);
+            if (!catalogue) {
+              return res.status(404).json({ message: 'Catalogue not found' });
+            }
+
+            catalogue.productName = productName;
+            catalogue.productDescription = productDescription;
+            catalogue.price = price;
+            catalogue.vendorId = vendorId;
+            catalogue.productImage =
+              productImages.length > 0 ? productImages : catalogue.productImage;
+            catalogue.updatedAt = Date.now();
+
+            const updatedCatalogue = await catalogue.save();
+            return res.status(200).json(updatedCatalogue);
+          } else {
+            // Add operation
+            const newCatalogue = new Catalogue({
+              productName,
+              productDescription,
+              price,
+              vendorId,
+              productImage: productImages,
+              createdAt: Date.now(),
+            });
+
+            const savedCatalogue = await newCatalogue.save();
+            res.status(201).json(savedCatalogue);
+          }
+        } catch (error) {
+          console.error('Error processing catalogue:', error);
+          res.status(500).send('Server Error');
+        }
+      });
+    } else {
+      // Handle normal form data processing (without file upload)
+      const { id, productName, productDescription, price, vendorId } = req.body;
+
+      if (!productName || !productDescription || !price || !vendorId) {
+        return res.status(400).json({
+          message:
+            'Product name, description, price, and vendor ID are required',
+        });
+      }
+
+      if (id) {
+        // Edit operation
+        const catalogue = await Catalogue.findById(id);
+        if (!catalogue) {
+          return res.status(404).json({ message: 'Catalogue not found' });
+        }
+
+        catalogue.productName = productName;
+        catalogue.productDescription = productDescription;
+        catalogue.price = price;
+        catalogue.vendorId = vendorId;
+        catalogue.updatedAt = Date.now();
+
+        const updatedCatalogue = await catalogue.save();
+        return res.status(200).json(updatedCatalogue);
+      } else {
+        // Add operation
+        const newCatalogue = new Catalogue({
+          productName,
+          productDescription,
+          price,
+          vendorId,
+          createdAt: Date.now(),
+        });
+
+        const savedCatalogue = await newCatalogue.save();
+        res.status(201).json(savedCatalogue);
+      }
+    }
+  } catch (error) {
+    console.error('Error processing catalogue:', error);
+    res.status(500).send('Server Error');
+  }
+};
+
+//fetch catalogue based on vendor id
+const fetchCataloguesByVendorId = async (req, res) => {
+  try {
+    const { vendorId } = req.query; // Get the vendor ID from query parameters
+
+    if (!vendorId) {
+      return res.status(400).json({ message: 'Vendor ID is required' });
+    }
+
+    // Fetch catalogues by vendor ID
+    const catalogues = await Catalogue.find({ vendorId });
+
+    // Send the fetched catalogues as the response
+    res.status(200).json(catalogues);
+  } catch (error) {
+    console.error('Error fetching catalogues by vendor ID:', error);
+    res.status(500).send('Server Error');
+  }
+};
+
 module.exports = {
   fetchVendorDetails,
   fetchVendorWrtSubcategory,
   updateStatus,
+  uploadCatalogue,
+  fetchCataloguesByVendorId,
 };

@@ -29,7 +29,41 @@ const vendorSchema = new mongoose.Schema({
   updatedAt: { type: Date, required: true, default: Date.now() },
 });
 
+const catalogueSchema = new mongoose.Schema({
+  productName: {
+    type: String,
+    required: true,
+  },
+  productDescription: {
+    type: String,
+    required: true,
+  },
+  productImage: [{ type: String }],
+  price: {
+    type: Number,
+    required: true,
+  },
+  vendorId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'Vendor',
+    required: true,
+  },
+  createdAt: {
+    type: Date,
+    default: Date.now,
+  },
+  updatedAt: {
+    type: Date,
+    default: Date.now,
+  },
+});
+
+// Define models
+const Catalogue = mongoose.model('Catalogue', catalogueSchema);
+
 // Define models
 const Vendor = mongoose.model('Vendor', vendorSchema);
-
-module.exports = Vendor;
+module.exports = {
+  Vendor,
+  Catalogue,
+};

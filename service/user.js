@@ -9,11 +9,6 @@ const {
 } = require('../middleware/multerMiddleware');
 const bucket = require('../firebaseAdmin'); // Import Firebase bucket instance
 
-// const {
-//   uploadSingle,
-//   uploadMultiple,
-// } = require('../middleware/multerMiddleware');
-
 const userlogin = async (req, res) => {
   try {
     const userEmail = req.body.email;
@@ -169,72 +164,6 @@ const userDetails = async (req, res) => {
   }
 };
 
-// user and vendor edit api
-// const editUser = async (req, res) => {
-//   try {
-//     const { userId } = req.params;
-//     const {
-//       firstName,
-//       lastName,
-//       email,
-//       phonenumber,
-//       isVendor,
-//       businessname,
-//       businessdescription,
-//       province,
-//       city,
-//       postalcode,
-//       businessnumber,
-//       category,
-//       subcategory,
-//       status,
-//     } = req.body;
-
-//     const updatedFields = {
-//       firstName,
-//       lastName,
-//       email,
-//       phonenumber,
-//     };
-
-//     const updatedUser = await User.findByIdAndUpdate(
-//       userId,
-//       { $set: updatedFields },
-//       { new: true }
-//     );
-
-//     if (isVendor) {
-//       const files = req.files; // Array of files uploaded
-//       const fileUrls = files.map((file) => file.firebaseUrl);
-
-//       const updatedVendorFields = {
-//         businessname,
-//         businessdescription,
-//         province,
-//         city,
-//         postalcode,
-//         businessnumber,
-//         businessImages: fileUrls,
-//         category, // Store the category ID
-//         subcategory, // Store the subcategory ID
-//         status,
-//       };
-
-//       const updatedVendor = await Vendor.findOneAndUpdate(
-//         { vendorid: userId },
-//         { $set: updatedVendorFields },
-//         { new: true }
-//       );
-
-//       return res.json({ updatedUser, updatedVendor });
-//     } else {
-//       res.json({ updatedUser });
-//     }
-//   } catch (error) {
-//     console.error('Error:', error);
-//     res.status(500).send('Server Error');
-//   }
-// };
 const editUser = async (req, res) => {
   const handleUserUpdate = async (req, res) => {
     try {

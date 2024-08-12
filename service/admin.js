@@ -741,61 +741,7 @@ const fetchCategory = async (req, res) => {
 };
 
 //fetch SubCategory
-// const fetchSubCategory = async (req, res) => {
-//   try {
-//     const { name } = req.query;
-//     let subcategories;
 
-//     if (name) {
-//       const fetchCat = await Category.findOne({ name: name, isActive: true });
-//       if (!fetchCat) {
-//         return res.status(400).json({ message: 'No category found' });
-//       }
-//       subcategories = await Subcategory.find({
-//         category: fetchCat._id,
-//         isActive: true,
-//       });
-//       if (subcategories.length === 0) {
-//         return res.status(400).json({ message: 'No subcategory found' });
-//       }
-//     } else {
-//       subcategories = await Subcategory.find({ isActive: true });
-//     }
-
-//     res.status(200).json(subcategories);
-//   } catch (error) {
-//     console.log('error', error);
-//     res.status(500).send('Server Error');
-//   }
-// };
-
-// const fetchSubCategory = async (req, res) => {
-//   try {
-//     const { name } = req.query;
-//     let subcategories;
-
-//     if (name) {
-//       const fetchCat = await Category.findOne({ name: name, isActive: true });
-//       if (!fetchCat) {
-//         return res.status(400).json({ message: 'No category found' });
-//       }
-//       subcategories = await Subcategory.find({
-//         category: fetchCat._id,
-//         isActive: true,
-//       });
-//       if (subcategories.length === 0) {
-//         return res.status(400).json({ message: 'No subcategory found' });
-//       }
-//     } else {
-//       subcategories = await Subcategory.find({ isActive: true });
-//     }
-
-//     res.status(200).json(subcategories);
-//   } catch (error) {
-//     console.log('error', error);
-//     res.status(500).send('Server Error');
-//   }
-// };
 const fetchSubCategory = async (req, res) => {
   try {
     const { name } = req.query;
