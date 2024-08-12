@@ -148,7 +148,7 @@ const userDetails = async (req, res) => {
     }
 
     // Fetch the user by ID
-    const user = await User.findOne({ email: email }).exec();
+    const user = await User.findOne({ email: email, isActive: true }).exec();
 
     if (user) {
       // Return user details
@@ -245,9 +245,37 @@ const editUser = async (req, res) => {
   }
 };
 
+//delete Account
+// Delete Account API (soft delete)
+const deleteAccount = async (req, res) => {
+  try {
+    const { id } = req.query; // Get the user ID from the request parameters
+
+    // Find the user by ID and update the `isActive` field
+    const updatedUser = await User.findByIdAndUpdate(
+      id,
+      { isActive: false, updatedAt: Date.now() }, // Set `isActive` to false and update `updatedAt`
+      { new: true } // Return the updated document
+    );
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    res.status(200).json({
+      message: 'User account deactivated successfully',
+      user: updatedUser,
+    });
+  } catch (error) {
+    console.error('Error deactivating user account:', error);
+    res.status(500).send('Server Error');
+  }
+};
+
 module.exports = {
   userlogin,
   createUser,
   userDetails,
   editUser,
+  deleteAccount,
 };

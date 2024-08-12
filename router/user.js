@@ -15,6 +15,7 @@ router.post(
   userService.createUser
 );
 router.put('/editUser/:userId', userService.editUser);
+router.put('/deleteAccount', userService.deleteAccount);
 
 router.post('/login', userService.userlogin);
 
