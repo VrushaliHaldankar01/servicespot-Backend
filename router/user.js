@@ -16,7 +16,7 @@ router.post(
 );
 router.put('/editUser/:userId', userService.editUser);
 router.put('/deleteAccount', userService.deleteAccount);
-
+router.post('/updatePassword', userService.updatePassword);
 router.post('/login', userService.userlogin);
 
 //fetch

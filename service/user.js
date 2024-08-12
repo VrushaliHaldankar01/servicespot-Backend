@@ -272,10 +272,53 @@ const deleteAccount = async (req, res) => {
   }
 };
 
+// Update Password API
+
+const updatePassword = async (req, res) => {
+  try {
+    const { id, oldPassword, newPassword } = req.body;
+
+    // Validate inputs
+    if (!id || !oldPassword || !newPassword) {
+      return res.status(400).json({
+        message: 'User ID, old password, and new password are required.',
+      });
+    }
+
+    // Find the user by ID
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    // Compare the old password with the stored hash
+    const isMatch = await bcrypt.compare(oldPassword, user.password);
+    if (!isMatch) {
+      return res.status(400).json({ message: 'Old password is incorrect.' });
+    }
+
+    // Hash the new password
+    const salt = await bcrypt.genSalt(10);
+    const hashedPassword = await bcrypt.hash(newPassword, salt);
+
+    // Update the password in the database
+    await User.findByIdAndUpdate(id, {
+      password: hashedPassword,
+      updatedAt: Date.now(),
+    });
+
+    res.status(200).json({ message: 'Password updated successfully.' });
+  } catch (error) {
+    console.error('Error updating password:', error);
+    res.status(500).send('Server Error');
+  }
+};
+
 module.exports = {
   userlogin,
   createUser,
   userDetails,
   editUser,
   deleteAccount,
+  updatePassword,
 };
