@@ -29,6 +29,17 @@ const vendorSchema = new mongoose.Schema({
   updatedAt: { type: Date, required: true, default: Date.now() },
 });
 
+// Define the virtual field
+vendorSchema.virtual('catalogue', {
+  ref: 'Catalogue',
+  localField: '_id',
+  foreignField: 'vendorId',
+});
+
+// Ensure virtual fields are serialized
+vendorSchema.set('toObject', { virtuals: true });
+vendorSchema.set('toJSON', { virtuals: true });
+
 const catalogueSchema = new mongoose.Schema({
   productName: {
     type: String,

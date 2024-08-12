@@ -98,6 +98,56 @@ module.exports = fetchVendorDetails;
 //     res.status(500).send('Server Error');
 //   }
 // };
+// const fetchVendorWrtSubcategory = async (req, res) => {
+//   try {
+//     const { id } = req.query;
+//     let vendordetails;
+
+//     if (id) {
+//       // Fetch vendors by the provided subcategory ID
+//       vendordetails = await Vendor.find({
+//         subcategory: id,
+//         isActive: true,
+//       })
+//         .populate({
+//           path: 'subcategory', // Path to populate subcategory details
+//           select: 'name', // Select specific fields from the populated subcategory
+//           populate: {
+//             path: 'category', // Nested populate to also include category details
+//             select: 'name',
+//           },
+//         })
+//         .populate({
+//           path: 'vendorid', // Populate vendorid to include user details
+//           select: 'firstName lastName email phonenumber', // Select specific fields from the User model
+//         });
+
+//       if (vendordetails.length === 0) {
+//         return res.status(400).json({ message: 'No vendor found' });
+//       }
+//     } else {
+//       // Fetch all active vendors if no subcategory ID is provided
+//       vendordetails = await Vendor.find({ isActive: true })
+//         .populate({
+//           path: 'subcategory',
+//           select: 'name',
+//           populate: {
+//             path: 'category',
+//             select: 'name',
+//           },
+//         })
+//         .populate({
+//           path: 'vendorid', // Populate vendorid to include user details
+//           select: 'firstName lastName email phonenumber', // Select specific fields from the User model
+//         });
+//     }
+
+//     res.status(200).json(vendordetails);
+//   } catch (error) {
+//     console.log('error', error);
+//     res.status(500).send('Server Error');
+//   }
+// };
 const fetchVendorWrtSubcategory = async (req, res) => {
   try {
     const { id } = req.query;
@@ -120,6 +170,10 @@ const fetchVendorWrtSubcategory = async (req, res) => {
         .populate({
           path: 'vendorid', // Populate vendorid to include user details
           select: 'firstName lastName email phonenumber', // Select specific fields from the User model
+        })
+        .populate({
+          path: 'catalogue', // Populate the catalogue virtual field
+          select: 'productName productDescription price productImage', // Select specific fields from the Catalogue model
         });
 
       if (vendordetails.length === 0) {
@@ -139,6 +193,10 @@ const fetchVendorWrtSubcategory = async (req, res) => {
         .populate({
           path: 'vendorid', // Populate vendorid to include user details
           select: 'firstName lastName email phonenumber', // Select specific fields from the User model
+        })
+        .populate({
+          path: 'catalogue', // Populate the catalogue virtual field
+          select: 'productName productDescription price productImage', // Select specific fields from the Catalogue model
         });
     }
 
@@ -148,6 +206,7 @@ const fetchVendorWrtSubcategory = async (req, res) => {
     res.status(500).send('Server Error');
   }
 };
+
 const updateStatus = async (req, res) => {
   const { id } = req.params; // Assuming the vendor ID is passed as a query parameter
   const { status } = req.body; // Assuming the status is also passed as a query parameter
