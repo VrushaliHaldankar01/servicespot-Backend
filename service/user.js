@@ -249,6 +249,196 @@ const userDetails = async (req, res) => {
 
 //delete Account
 
+// const editUser = async (req, res) => {
+//   const handleUserUpdate = async (req, res) => {
+//     try {
+//       const { userId } = req.params;
+//       const {
+//         firstName,
+//         lastName,
+//         email,
+//         phonenumber,
+//         isVendor,
+//         businessname,
+//         businessdescription,
+//         province,
+//         city,
+//         postalcode,
+//         businessnumber,
+//         category,
+//         subcategory,
+//         status,
+//       } = req.body;
+
+//       // Build the updated fields object with provided values
+//       const updatedFields = {};
+//       if (firstName) updatedFields.firstName = firstName;
+//       if (lastName) updatedFields.lastName = lastName;
+//       if (email) updatedFields.email = email;
+//       if (phonenumber) updatedFields.phonenumber = phonenumber;
+
+//       // Update the User document
+//       const updatedUser = await User.findByIdAndUpdate(
+//         userId,
+//         { $set: updatedFields },
+//         { new: true }
+//       );
+
+//       if (isVendor) {
+//         console.log('isVendor is true. Proceeding with vendor update.');
+//         const files = req.files; // Array of files uploaded
+//         const fileUrls = files ? files.map((file) => file.firebaseUrl) : [];
+//         console.log('Files:', files); // Debugging
+
+//         // Build the updated vendor fields object with provided values
+//         const updatedVendorFields = {};
+//         if (businessname) updatedVendorFields.businessname = businessname;
+//         if (businessdescription)
+//           updatedVendorFields.businessdescription = businessdescription;
+//         if (province) updatedVendorFields.province = province;
+//         if (city) updatedVendorFields.city = city;
+//         if (postalcode) updatedVendorFields.postalcode = postalcode;
+//         if (businessnumber) updatedVendorFields.businessnumber = businessnumber;
+//         if (category) updatedVendorFields.category = category;
+//         if (subcategory) updatedVendorFields.subcategory = subcategory;
+//         if (status) updatedVendorFields.status = status;
+//         if (fileUrls.length > 0) updatedVendorFields.businessImages = fileUrls;
+
+//         console.log('Updated Vendor Fields:', updatedVendorFields); // Debugging
+
+//         // Update the Vendor document
+//         const updatedVendor = await Vendor.findOneAndUpdate(
+//           { vendorid: userId },
+//           { $set: updatedVendorFields },
+//           { new: true }
+//         );
+
+//         if (!updatedVendor) {
+//           console.log('Vendor not found or not updated.');
+//         }
+
+//         return res.json({ updatedUser, updatedVendor });
+//       } else {
+//         res.json({ updatedUser });
+//       }
+//     } catch (error) {
+//       console.error('Error:', error);
+//       res.status(500).send('Server Error');
+//     }
+//   };
+
+//   // Check if the request is multipart/form-data
+//   if (
+//     req.headers['content-type'] &&
+//     req.headers['content-type'].includes('multipart/form-data')
+//   ) {
+//     uploadMultiple('businessImages')(req, res, function (err) {
+//       if (err) {
+//         console.error('Error uploading file:', err);
+//         return res.status(500).send('Error uploading file');
+//       }
+//       handleUserUpdate(req, res);
+//     });
+//   } else {
+//     handleUserUpdate(req, res);
+//   }
+// };
+// const editUser = async (req, res) => {
+//   const handleUserUpdate = async (req, res) => {
+//     try {
+//       const { userId } = req.params;
+//       const {
+//         firstName,
+//         lastName,
+//         email,
+//         phonenumber,
+//         role, // Added role here
+//         businessname,
+//         businessdescription,
+//         province,
+//         city,
+//         postalcode,
+//         businessnumber,
+//         category,
+//         subcategory,
+//         status,
+//       } = req.body;
+
+//       // Build the updated fields object with provided values
+//       const updatedFields = {};
+//       if (firstName) updatedFields.firstName = firstName;
+//       if (lastName) updatedFields.lastName = lastName;
+//       if (email) updatedFields.email = email;
+//       if (phonenumber) updatedFields.phonenumber = phonenumber;
+//       if (role) updatedFields.role = role; // Adding role to the updated fields
+
+//       // Update the User document
+//       const updatedUser = await User.findByIdAndUpdate(
+//         userId,
+//         { $set: updatedFields },
+//         { new: true }
+//       );
+
+//       // Proceed only if the role is 'vendor'
+//       if (role === 'vendor') {
+//         console.log('Role is vendor. Proceeding with vendor update.');
+//         const files = req.files; // Array of files uploaded
+//         const fileUrls = files ? files.map((file) => file.firebaseUrl) : [];
+//         console.log('Files:', files); // Debugging
+
+//         // Build the updated vendor fields object with provided values
+//         const updatedVendorFields = {};
+//         if (businessname) updatedVendorFields.businessname = businessname;
+//         if (businessdescription)
+//           updatedVendorFields.businessdescription = businessdescription;
+//         if (province) updatedVendorFields.province = province;
+//         if (city) updatedVendorFields.city = city;
+//         if (postalcode) updatedVendorFields.postalcode = postalcode;
+//         if (businessnumber) updatedVendorFields.businessnumber = businessnumber;
+//         if (category) updatedVendorFields.category = category;
+//         if (subcategory) updatedVendorFields.subcategory = subcategory;
+//         if (status) updatedVendorFields.status = status;
+//         if (fileUrls.length > 0) updatedVendorFields.businessImages = fileUrls;
+
+//         console.log('Updated Vendor Fields:', updatedVendorFields); // Debugging
+
+//         // Update the Vendor document
+//         const updatedVendor = await Vendor.findOneAndUpdate(
+//           { vendorid: userId },
+//           { $set: updatedVendorFields },
+//           { new: true }
+//         );
+
+//         if (!updatedVendor) {
+//           console.log('Vendor not found or not updated.');
+//         }
+
+//         return res.json({ updatedUser, updatedVendor });
+//       } else {
+//         return res.json({ updatedUser });
+//       }
+//     } catch (error) {
+//       console.error('Error:', error);
+//       return res.status(500).send('Server Error');
+//     }
+//   };
+
+//   // Check if the request is multipart/form-data
+//   if (
+//     req.headers['content-type'] &&
+//     req.headers['content-type'].includes('multipart/form-data')
+//   ) {
+//     uploadMultiple('businessImages')(req, res, function (err) {
+//       if (err) {
+//         console.error('Error uploading file:', err);
+//         return res.status(500).send('Error uploading file');
+//       }
+//       handleUserUpdate(req, res);
+//     });
+//   } else {
+//     handleUserUpdate(req, res);
+//   }
+// };
 const editUser = async (req, res) => {
   const handleUserUpdate = async (req, res) => {
     try {
@@ -258,7 +448,7 @@ const editUser = async (req, res) => {
         lastName,
         email,
         phonenumber,
-        isVendor,
+        role, // Added role here
         businessname,
         businessdescription,
         province,
@@ -276,6 +466,7 @@ const editUser = async (req, res) => {
       if (lastName) updatedFields.lastName = lastName;
       if (email) updatedFields.email = email;
       if (phonenumber) updatedFields.phonenumber = phonenumber;
+      if (role) updatedFields.role = role; // Adding role to the updated fields
 
       // Update the User document
       const updatedUser = await User.findByIdAndUpdate(
@@ -284,9 +475,15 @@ const editUser = async (req, res) => {
         { new: true }
       );
 
-      if (isVendor) {
-        console.log('isVendor is true. Proceeding with vendor update.');
-        const files = req.files; // Array of files uploaded
+      // Proceed only if the role is 'vendor'
+      if (role === 'vendor') {
+        console.log('Role is vendor. Proceeding with vendor update.');
+
+        // Get existing vendor details
+        const existingVendor = await Vendor.findOne({ vendorid: userId });
+
+        // Handle file uploads if present
+        const files = req.files;
         const fileUrls = files ? files.map((file) => file.firebaseUrl) : [];
         console.log('Files:', files); // Debugging
 
@@ -302,7 +499,13 @@ const editUser = async (req, res) => {
         if (category) updatedVendorFields.category = category;
         if (subcategory) updatedVendorFields.subcategory = subcategory;
         if (status) updatedVendorFields.status = status;
-        if (fileUrls.length > 0) updatedVendorFields.businessImages = fileUrls;
+
+        // Use new images if available, otherwise keep the old ones
+        if (fileUrls.length > 0) {
+          updatedVendorFields.businessImages = fileUrls;
+        } else if (existingVendor && existingVendor.businessImages) {
+          updatedVendorFields.businessImages = existingVendor.businessImages;
+        }
 
         console.log('Updated Vendor Fields:', updatedVendorFields); // Debugging
 
@@ -319,11 +522,11 @@ const editUser = async (req, res) => {
 
         return res.json({ updatedUser, updatedVendor });
       } else {
-        res.json({ updatedUser });
+        return res.json({ updatedUser });
       }
     } catch (error) {
       console.error('Error:', error);
-      res.status(500).send('Server Error');
+      return res.status(500).send('Server Error');
     }
   };
 
@@ -332,7 +535,7 @@ const editUser = async (req, res) => {
     req.headers['content-type'] &&
     req.headers['content-type'].includes('multipart/form-data')
   ) {
-    uploadMultiple('businessImages')(req, res, function (err) {
+    uploadSingle('businessImages')(req, res, function (err) {
       if (err) {
         console.error('Error uploading file:', err);
         return res.status(500).send('Error uploading file');
