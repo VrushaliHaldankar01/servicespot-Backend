@@ -2,7 +2,14 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const mongoose = require('mongoose');
 require('dotenv').config();
-
+// const cors = require('cors');
+// const corsConfig = {
+//   origin: '*',
+//   credential: true,
+//   methods: ['GET', 'POST', 'PUT', 'DELETE'],
+// };
+// app.options('', cors(config));
+// app.use(cors(corsConfig));
 //user Routes
 const userRouter = require('./router/user');
 
