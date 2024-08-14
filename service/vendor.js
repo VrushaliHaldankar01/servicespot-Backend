@@ -16,7 +16,7 @@ const bucket = require('../firebaseAdmin'); // Import Firebase bucket instance
 
 const fetchVendorDetails = async (req, res) => {
   try {
-    const { id, name, status } = req.query;
+    const { id, name, status, vendorid } = req.query;
     let query = {};
 
     // Build the query object based on the provided query parameters
@@ -26,6 +26,9 @@ const fetchVendorDetails = async (req, res) => {
 
     if (name) {
       query.businessname = name;
+    }
+    if (vendorid) {
+      query.vendorid = vendorid;
     }
 
     if (status) {

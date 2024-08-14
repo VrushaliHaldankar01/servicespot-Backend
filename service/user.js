@@ -1,6 +1,8 @@
 const mongoose = require('mongoose');
 const User = require('../models/user');
-const Vendor = require('../models/vendor');
+// const Vendor = require('../models/vendor');
+const { Vendor, Catalogue } = require('../models/vendor');
+
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const {
@@ -164,6 +166,89 @@ const userDetails = async (req, res) => {
   }
 };
 
+// const editUser = async (req, res) => {
+//   const handleUserUpdate = async (req, res) => {
+//     try {
+//       const { userId } = req.params;
+//       const {
+//         firstName,
+//         lastName,
+//         email,
+//         phonenumber,
+//         isVendor,
+//         businessname,
+//         businessdescription,
+//         province,
+//         city,
+//         postalcode,
+//         businessnumber,
+//         category,
+//         subcategory,
+//         status,
+//       } = req.body;
+
+//       const updatedFields = { firstName, lastName, email, phonenumber };
+
+//       // Update the User document
+//       const updatedUser = await User.findByIdAndUpdate(
+//         userId,
+//         { $set: updatedFields },
+//         { new: true }
+//       );
+
+//       if (isVendor) {
+//         const files = req.files; // Array of files uploaded
+//         const fileUrls = files ? files.map((file) => file.firebaseUrl) : [];
+
+//         const updatedVendorFields = {
+//           businessname,
+//           businessdescription,
+//           province,
+//           city,
+//           postalcode,
+//           businessnumber,
+//           businessImages: fileUrls,
+//           category,
+//           subcategory,
+//           status,
+//         };
+
+//         // Update the Vendor document
+//         const updatedVendor = await Vendor.findOneAndUpdate(
+//           { vendorid: userId },
+//           { $set: updatedVendorFields },
+//           { new: true }
+//         );
+
+//         return res.json({ updatedUser, updatedVendor });
+//       } else {
+//         res.json({ updatedUser });
+//       }
+//     } catch (error) {
+//       console.error('Error:', error);
+//       res.status(500).send('Server Error');
+//     }
+//   };
+
+//   // Check if the request is multipart/form-data
+//   if (
+//     req.headers['content-type'] &&
+//     req.headers['content-type'].includes('multipart/form-data')
+//   ) {
+//     uploadMultiple('businessImages')(req, res, function (err) {
+//       if (err) {
+//         console.error('Error uploading file:', err);
+//         return res.status(500).send('Error uploading file');
+//       }
+//       handleUserUpdate(req, res);
+//     });
+//   } else {
+//     handleUserUpdate(req, res);
+//   }
+// };
+
+//delete Account
+
 const editUser = async (req, res) => {
   const handleUserUpdate = async (req, res) => {
     try {
@@ -185,7 +270,12 @@ const editUser = async (req, res) => {
         status,
       } = req.body;
 
-      const updatedFields = { firstName, lastName, email, phonenumber };
+      // Build the updated fields object with provided values
+      const updatedFields = {};
+      if (firstName) updatedFields.firstName = firstName;
+      if (lastName) updatedFields.lastName = lastName;
+      if (email) updatedFields.email = email;
+      if (phonenumber) updatedFields.phonenumber = phonenumber;
 
       // Update the User document
       const updatedUser = await User.findByIdAndUpdate(
@@ -195,21 +285,26 @@ const editUser = async (req, res) => {
       );
 
       if (isVendor) {
+        console.log('isVendor is true. Proceeding with vendor update.');
         const files = req.files; // Array of files uploaded
         const fileUrls = files ? files.map((file) => file.firebaseUrl) : [];
+        console.log('Files:', files); // Debugging
 
-        const updatedVendorFields = {
-          businessname,
-          businessdescription,
-          province,
-          city,
-          postalcode,
-          businessnumber,
-          businessImages: fileUrls,
-          category,
-          subcategory,
-          status,
-        };
+        // Build the updated vendor fields object with provided values
+        const updatedVendorFields = {};
+        if (businessname) updatedVendorFields.businessname = businessname;
+        if (businessdescription)
+          updatedVendorFields.businessdescription = businessdescription;
+        if (province) updatedVendorFields.province = province;
+        if (city) updatedVendorFields.city = city;
+        if (postalcode) updatedVendorFields.postalcode = postalcode;
+        if (businessnumber) updatedVendorFields.businessnumber = businessnumber;
+        if (category) updatedVendorFields.category = category;
+        if (subcategory) updatedVendorFields.subcategory = subcategory;
+        if (status) updatedVendorFields.status = status;
+        if (fileUrls.length > 0) updatedVendorFields.businessImages = fileUrls;
+
+        console.log('Updated Vendor Fields:', updatedVendorFields); // Debugging
 
         // Update the Vendor document
         const updatedVendor = await Vendor.findOneAndUpdate(
@@ -217,6 +312,10 @@ const editUser = async (req, res) => {
           { $set: updatedVendorFields },
           { new: true }
         );
+
+        if (!updatedVendor) {
+          console.log('Vendor not found or not updated.');
+        }
 
         return res.json({ updatedUser, updatedVendor });
       } else {
@@ -245,7 +344,6 @@ const editUser = async (req, res) => {
   }
 };
 
-//delete Account
 // Delete Account API (soft delete)
 const deleteAccount = async (req, res) => {
   try {
